@@ -11,9 +11,9 @@ const createCard = (req, res, next) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError({ massage: 'Переданы некорректные данные.' }));
+        next(new BadRequestError('Переданы некорректные данные.'));
       }
-      next(new ServerError({ massage: 'Ошибка на сервере' }));
+      next(new ServerError('Ошибка на сервере'));
     });
 };
 
@@ -28,15 +28,15 @@ const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        next(new NotFoundError({ massage: 'Карточка не найдена.' }));
+        next(new BadRequestError('Карточка не найдена.'));
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new BadRequestError({ massage: 'Переданы некорректные данные.' }));
+        next(new BadRequestError('Переданы некорректные данные.'));
       }
-      next(new ServerError({ massage: 'Ошибка на сервере' }));
+      next(new ServerError('Ошибка на сервере'));
     });
 };
 
@@ -44,15 +44,15 @@ const likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        next(new NotFoundError({ massage: 'Карточка не найдена.' }));
+        next(new NotFoundError('Карточка не найдена.'));
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError({ massage: 'Переданы некорректные данные.' }));
+        next(new BadRequestError('Переданы некорректные данные.'));
       }
-      next(new ServerError({ massage: 'Ошибка на сервере' }));
+      next(new ServerError('Ошибка на сервере'));
     });
 };
 
@@ -68,7 +68,7 @@ const dislikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError({ message: 'Переданы некорректные данные.' }));
       }
-      next(new ServerError({ message: 'Ошибка на сервере' }));
+      next(new ServerError('Ошибка на сервере'));
     });
 };
 
