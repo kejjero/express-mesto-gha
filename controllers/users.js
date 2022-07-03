@@ -1,7 +1,7 @@
 const User = require('../models/user');
-const ServerError = require('../errors/ServerError');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const ServerError = require('../errors/ServerError');
 
 const createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
@@ -11,8 +11,9 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные.'));
+      } else {
+        next(new ServerError('Ошибка на сервере'));
       }
-      next(new ServerError('Ошибка на сервере'));
     });
 };
 
