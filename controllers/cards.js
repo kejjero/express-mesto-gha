@@ -77,9 +77,9 @@ const dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(new BadRequestError({ message: 'Переданы некорректные данные.' }));
+        next(new BadRequestError({ message: 'Переданы некорректные данные.' }));
       }
-      return next(new ServerError({ message: 'Ошибка на сервере' }));
+      next(new ServerError({ message: 'Ошибка на сервере' }));
     });
 };
 
