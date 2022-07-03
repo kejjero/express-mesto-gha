@@ -19,7 +19,7 @@ app.use(errorHandler);
 
 app.use((req, _, next) => {
   req.user = {
-    _id: '628cbe6de71aa4a03c14ddea',
+    _id: '62c17401d2c998946b390be1',
   };
   next();
 });
@@ -27,7 +27,6 @@ app.use((req, _, next) => {
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`App listening on port ${PORT}`);
-});
+app.use('*', (_, res) => res.status(404).send({ message: 'Cтраница не найдена.' }));
+
+app.listen(PORT);
