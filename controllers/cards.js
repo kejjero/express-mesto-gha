@@ -1,7 +1,7 @@
 const Card = require('../models/card');
-const ServerError = require('../errors/ServerError');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const ServerError = require('../errors/ServerError');
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -29,17 +29,14 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка не найдена.'));
-
-        return;
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные.'));
-        return;
+        return res.status(400).send('Переданы некорректные данные.');
       }
-      next(new ServerError('Ошибка на сервере'));
+      return res.status(500).send('Ошибка на сервере');
     });
 };
 
@@ -48,7 +45,6 @@ const likeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка не найдена.'));
-        return;
       }
       res.send({ data: card });
     })
@@ -62,7 +58,6 @@ const dislikeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка не найдена.'));
-        return;
       }
       res.send({ data: card });
     })
