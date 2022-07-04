@@ -11,9 +11,9 @@ const createCard = (req, res, next) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError( 'Данные некорректны' ));
+        next(new BadRequestError({ message: 'Данные некорректны' }));
       }
-      next(new ServerError({ message: 'Ошибка на сервере' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
@@ -21,7 +21,7 @@ const getCards = (_, res) => {
   Card.find({})
     .populate('owner')
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'Ошибка' }));
+    .catch(() => res.status(500).send({ message: 'Ошибка сервера' }));
 };
 
 const deleteCard = (req, res, next) => {
@@ -36,7 +36,7 @@ const deleteCard = (req, res, next) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Данные некорректны'));
       }
-      next(new ServerError('Ошибка на сервере'));
+      next(new ServerError('Ошибка сервера'));
     });
 };
 
@@ -52,7 +52,7 @@ const likeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Данные некорректны'));
       }
-      next(new ServerError('Ошибка на сервере'));
+      next(new ServerError('Ошибка сервера'));
     });
 };
 
@@ -68,7 +68,7 @@ const dislikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError({ message: 'Данные некорректны' }));
       }
-      next(new ServerError({ message: 'Ошибка на сервере' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 

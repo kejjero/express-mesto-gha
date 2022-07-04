@@ -10,10 +10,9 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные.' ));
-      } else {
-        return next(err);
+        return next(new BadRequestError('Переданы некорректные данные.'));
       }
+      return next(err);
     });
 };
 
@@ -38,7 +37,7 @@ const getUser = (req, res, next) => {
         next(new BadRequestError({ message: 'Переданы некорректный id.' }));
       }
       next(new ServerError({ message: 'Ошибка на сервере' }));
-    })
+    });
 };
 
 const updateUser = (req, res, next) => {
