@@ -1,7 +1,7 @@
 const User = require('../models/user');
 const ServerError = require('../errors/ServerError');
-const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
 
 const createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
@@ -10,7 +10,7 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные.'));
+        return next(new BadRequestError('Данные некорректны'));
       }
       return next(err);
     });
@@ -20,7 +20,7 @@ const getUsers = (_, res, next) => {
   User.find({})
     .then((users) => res.status(200).send({ data: users }))
     .catch(() => {
-      next(new ServerError({ message: 'Ошибка на сервере' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
@@ -34,9 +34,9 @@ const getUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError({ message: 'Переданы некорректный id.' }));
+        next(new BadRequestError({ message: 'Передан некорректный id.' }));
       }
-      next(new ServerError({ message: 'Ошибка на сервере' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
@@ -47,9 +47,9 @@ const updateUser = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные.'));
+        next(new BadRequestError('Данные некорректны'));
       }
-      next(new ServerError({ message: 'Ошибка на сервере' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
@@ -60,9 +60,9 @@ const updateAvatar = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError({ message: 'Переданы некорректные данные.' }));
+        next(new BadRequestError({ message: 'Данные некорректны' }));
       } else {
-        next(new ServerError({ message: 'Ошибка на сервере' }));
+        next(new ServerError({ message: 'Ошибка сервера' }));
       }
       next(err);
     });

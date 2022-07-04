@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const ServerError = require('../errors/ServerError');
-const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
