@@ -11,16 +11,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const { PORT = 3000 } = process.env;
 
 const errorHandler = (err, req, res, next) => {
-  if (err.code) {
-    return res.status(err.code).send({ message: err.message || 'Ошибка' });
-  }
-  res.status(err.code).send(err.message);
-  return next();
+  res.status(err.code).send({ message: err.message });
+  next();
 };
 
-app.use(errorHandler);
-
-app.use((req, _, next) => {
+app.use((req, _res, next) => {
   req.user = {
     _id: '62c17401d2c998946b390be1',
   };
@@ -30,6 +25,11 @@ app.use((req, _, next) => {
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.use('*', (_, res) => res.status(404).send({ message: 'Cтраница не найдена.' }));
+app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена.' }));
 
-app.listen(PORT);
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
+  console.log(`App listening on port ${PORT}`);
+});
