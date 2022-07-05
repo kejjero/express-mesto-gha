@@ -17,7 +17,7 @@ const createCard = (req, res, next) => {
 };
 
 const getCards = (req, res, next) => {
-  Card.find({})
+  return Card.find({})
     .populate('owner')
     .then((cards) => {
       if (!cards) {
