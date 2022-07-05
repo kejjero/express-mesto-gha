@@ -10,7 +10,7 @@ const createCard = (req, res, next) => {
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === 'NotFoundError') {
-        throw next(new BadRequestError({ message: 'Данные некорректны' }));
+        next(new BadRequestError({ message: 'Данные некорректны' }));
       }
       next(new ServerError('Ошибка сервера'));
     });
