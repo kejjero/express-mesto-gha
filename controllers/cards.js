@@ -21,12 +21,12 @@ const getCards = (req, res, next) => {
   Card.find({})
     .populate('owner')
     .then((cards) => {
-      if(!cards) {
+      if (!cards) {
         throw next(new NotFoundError('Карточка не найдена.'));
       }
     })
     .catch(() => {
-      next(new ServerError('Ошибка сервера' ));
+      next(new ServerError('Ошибка сервера'));
     });
 };
 

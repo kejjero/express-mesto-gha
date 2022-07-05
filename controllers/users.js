@@ -9,7 +9,7 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError('Данные некорректны'));
       }
       return next(err);
     });
@@ -59,8 +59,7 @@ const updateAvatar = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError({ message: 'Данные некорректны' }));
-        return
+        throw next(new BadRequestError({ message: 'Данные некорректны' }));
       }
       next(new ServerError({ message: 'Ошибка сервера' }));
     });
