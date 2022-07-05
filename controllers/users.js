@@ -6,7 +6,11 @@ const BadRequestError = require('../errors/BadRequestError');
 const createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
   return User.create({ name, about, avatar })
-    .then((user) => res.status(200 || 201).send({ data: user }))
+    .then((user) => {
+      if (res.status === 200 || 201) {
+        res.send({ data: user })
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Данные некорректны'));
@@ -30,7 +34,7 @@ const getUser = (req, res, next) => {
         next(new NotFoundError({ message: 'Пользователь с таким id не найден.' }));
         return;
       }
-      res.status(200).send({ data: users });
+      return res.status(200).send({ data: users });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -45,7 +49,11 @@ const updateUser = (req, res, next) => {
   const { name, about } = req.body;
 
   return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (res.status === 200) {
+        return res.send({ data: user })
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Данные некорректны'));
