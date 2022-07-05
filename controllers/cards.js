@@ -17,12 +17,13 @@ const createCard = (req, res, next) => {
 };
 
 const getCards = (req, res, next) => {
-  return Card.find({})
+  Card.find({})
     .populate('owner')
     .then((cards) => {
-      if (!cards) {
-        throw next(new NotFoundError('Карточка не найдена.'));
+      if(cards) {
+        res.send({ data: cards })
       }
+        throw next(new ServerError('Карточки не найдены.'));
     })
     .catch(() => {
       throw next(new ServerError('Ошибка сервера'));
