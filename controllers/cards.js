@@ -10,18 +10,21 @@ const createCard = (req, res, next) => {
 
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'NotFoundError') {
         next(new BadRequestError({ message: 'Данные некорректны' }));
+        return;
       }
       next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
-const getCards = (_, res) => {
+const getCards = (req, res, next) => {
   Card.find({})
     .populate('owner')
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(500).send({ message: 'Ошибка сервера' }));
+    .catch(() => {
+      next(new ServerError({ message: 'Ошибка сервера' }));
+    });
 };
 
 const deleteCard = (req, res, next) => {
@@ -29,12 +32,14 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         next(new NotFoundError('Карточка не найдена.'));
+        return;
       }
       res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError('Данные некорректны'));
+        return;
       }
       next(new ServerError('Ошибка сервера'));
     });
@@ -51,6 +56,7 @@ const likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Данные некорректны'));
+        return;
       }
       next(new ServerError('Ошибка сервера'));
     });
@@ -60,13 +66,15 @@ const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
-        return res.status(404).send({ message: 'Карточка с таким id не найдена.' });
+        next(new NotFoundError('Карточка с таким id не найдена.'));
+        return;
       }
-      return res.send({ data: card });
+      res.send({ data: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError({ message: 'Данные некорректны' }));
+        return;
       }
       next(new ServerError({ message: 'Ошибка сервера' }));
     });

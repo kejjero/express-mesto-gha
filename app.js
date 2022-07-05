@@ -22,8 +22,8 @@ app.use((req, _res, next) => {
   next();
 });
 
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/cards'));
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
 
 app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 
