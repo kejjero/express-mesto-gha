@@ -9,7 +9,7 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError('Данные некорректны'));
       }
       return next(err);
     });
@@ -19,7 +19,7 @@ const getUsers = (_, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      next(new ServerError({ message: 'Ошибка сервера' }));
+      throw next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
@@ -27,13 +27,13 @@ const getUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((users) => {
       if (!users) {
-        next(new NotFoundError({ message: 'Пользователь с таким id не найден.' }));
+        throw next(new NotFoundError({ message: 'Пользователь с таким id не найден.' }));
       }
       res.status(200).send({ data: users });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError({ message: 'Передан некорректный id.' }));
+        throw next(new BadRequestError({ message: 'Передан некорректный id.' }));
       }
       next(new ServerError({ message: 'Ошибка сервера' }));
     });
@@ -46,7 +46,7 @@ const updateUser = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError('Данные некорректны'));
       }
       next(new ServerError({ message: 'Ошибка сервера' }));
     });
@@ -59,7 +59,7 @@ const updateAvatar = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError({ message: 'Данные некорректны' }));
+        throw next(new BadRequestError({ message: 'Данные некорректны' }));
       }
       next(new ServerError({ message: 'Ошибка сервера' }));
     });
