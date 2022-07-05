@@ -20,10 +20,11 @@ const getCards = (req, res, next) => {
   Card.find({})
     .populate('owner')
     .then((cards) => {
-      if(cards) {
-        res.send({ data: cards })
-      }
+      if (cards) {
+        res.send({ data: cards });
+      } else {
         throw next(new ServerError('Карточки не найдены.'));
+      }
     })
     .catch(() => {
       throw next(new ServerError('Ошибка сервера'));
