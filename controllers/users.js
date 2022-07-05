@@ -6,7 +6,7 @@ const BadRequestError = require('../errors/BadRequestError');
 const createUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
   return User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(200 || 201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Данные некорректны'));
