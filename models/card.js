@@ -19,7 +19,6 @@ const cardSchema = new mongoose.Schema({
   likes: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'user',
-    required: [true, 'Обязательное поле для заполнения'],
     default: [],
   },
   createdAt: {
