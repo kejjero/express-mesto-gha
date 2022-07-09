@@ -38,9 +38,9 @@ const deleteCard = (req, res, next) => {
       .then(() => res.send({ message: 'Карточка удалена' }))
       .catch((err) => {
         if (err.name === 'CastError' || err.name === 'ValidationError') {
-          throw next(new BadRequestError('Данные некорректны'));
+          return next(new BadRequestError('Данные некорректны'));
         }
-        throw next(new ServerError('Ошибка на сервере'));
+        return next(new ServerError('Ошибка на сервере'));
       });
   };
 
@@ -56,9 +56,9 @@ const deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        throw next(new BadRequestError('Данные некорректны'));
+        return next(new BadRequestError('Данные некорректны'));
       }
-      throw next(new ServerError('Ошибка на сервере'));
+      return next(new ServerError('Ошибка на сервере'));
     });
 };
 
