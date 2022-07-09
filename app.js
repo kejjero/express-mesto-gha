@@ -1,6 +1,9 @@
+const helmet = require('helmet');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const rateLimit = require('express-rate-limit');
 const { celebrate, Joi } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
@@ -15,8 +18,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const { PORT = 3000 } = process.env;
 
-const errorHandler = (err, req, res, next) => {
-  res.status(err.code).send({ message: err.message });
+app.use(helmet());
+app.use(cookieParser());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(limiter);
+
+const errorHandler = (err, _req, res, next) => {
+  const statusCode = err.statusCode || 500;
+
+  const message = statusCode === 500 ? 'Ошибка сервера' : err.message;
+  res.status(statusCode).send({ message });
   next();
 };
 
@@ -45,7 +63,4 @@ app.use(errorHandler);
 
 app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`App listening on port ${PORT}`);
-});
+app.listen(PORT);

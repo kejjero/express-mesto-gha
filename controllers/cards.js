@@ -24,11 +24,11 @@ const getCards = (req, res, next) => {
       if (cards) {
         res.send({ data: cards });
       } else {
-        throw next(new ServerError('Карточки не найдены.'));
+        throw next(new ServerError('Карточки не найдены'));
       }
     })
     .catch(() => {
-      throw next(new ServerError('Ошибка сервера'));
+      next(new ServerError('Ошибка на сервере'));
     });
 };
 
@@ -38,9 +38,9 @@ const deleteCard = (req, res, next) => {
       .then(() => res.send({ message: 'Карточка удалена' }))
       .catch((err) => {
         if (err.name === 'CastError' || err.name === 'ValidationError') {
-          return next(new BadRequestError('Данные некорректны'));
+          throw next(new BadRequestError('Данные некорректны'));
         }
-        return next(new ServerError('Ошибка на сервере'));
+        next(new ServerError('Ошибка на сервере'));
       });
   };
 
@@ -56,9 +56,9 @@ const deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError('Данные некорректны'));
       }
-      return next(new ServerError('Ошибка на сервере'));
+      next(new ServerError('Ошибка на сервере'));
     });
 };
 

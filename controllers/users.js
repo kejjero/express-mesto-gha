@@ -28,9 +28,6 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  if (!email || !password) {
-    return next(new BadRequestError('email или пароль отсутствует'));
-  }
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
@@ -45,7 +42,7 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_KEY_CODE) {
-        return next(new DuplicateError('email уже зарегистрирован'));
+        next(new DuplicateError('email уже зарегистрирован'));
       }
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Данные некорректны'));
@@ -58,7 +55,7 @@ const getUsers = (_, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      throw next(new ServerError({ message: 'Ошибка сервера' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
