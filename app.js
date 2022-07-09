@@ -45,13 +45,6 @@ app.use(auth);
 
 app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 
-app.use((err, _req, res) => {
-  res.locals.error = err;
-  const status = err.status || 500;
-  res.status(status);
-  res.render('error');
-});
-
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);

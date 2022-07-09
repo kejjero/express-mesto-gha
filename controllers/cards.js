@@ -2,6 +2,7 @@ const Card = require('../models/card');
 const ServerError = require('../errors/ServerError');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
+const LockError = require('../errors/BadRequestError');
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
@@ -32,18 +33,32 @@ const getCards = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        throw next(new NotFoundError('Карточка не найдена.'));
+  const deleteCardHandler = () => {
+    Card.findByIdAndRemove(req.params.cardId)
+      .then(() => res.send({ message: 'Карточка удалена' }))
+      .catch((err) => {
+        if (err.name === 'CastError' || err.name === 'ValidationError') {
+          throw next(new BadRequestError('Данные некорректны'));
+        }
+        throw next(new ServerError('Ошибка на сервере'));
+      });
+  };
+
+  Card.findById(req.params.cardId)
+    .then((cardInfo) => {
+      if (!cardInfo) {
+        throw next(new NotFoundError('Карточка не найдена'));
       }
-      res.send({ data: card });
+      if (req.user._id !== cardInfo.owner.toString()) {
+        throw next(new LockError('невозможно удалить карточку другого пользователя'));
+      }
+      return deleteCardHandler();
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        throw next(new BadRequestError('Данные некорректны'));
+        return next(new BadRequestError('Данные некорректны'));
       }
-      next(new ServerError('Ошибка сервера'));
+      return next(new ServerError('Ошибка на сервере'));
     });
 };
 
