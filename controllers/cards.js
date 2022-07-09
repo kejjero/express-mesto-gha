@@ -56,9 +56,9 @@ const deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError('Данные некорректны'));
       }
-      return next(new ServerError('Ошибка на сервере'));
+      throw next(new ServerError('Ошибка на сервере'));
     });
 };
 

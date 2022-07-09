@@ -35,13 +35,13 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+app.use(auth);
 
 app.use('/', require('./routes/users'));
 
 app.use('/', require('./routes/cards'));
 
 app.use(errorHandler);
-app.use(auth);
 
 app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 

@@ -29,7 +29,7 @@ const createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
   if (!email || !password) {
-    throw next(new BadRequestError('email или пароль отсутствует'));
+    throw next(new BadRequestError({ message: 'email или пароль отсутствует' }));
   }
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
@@ -45,10 +45,10 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_KEY_CODE) {
-        throw next(new DuplicateError('email уже зарегистрирован'));
+        throw next(new DuplicateError({ message: 'email уже зарегистрирован' }));
       }
       if (err.name === 'ValidationError') {
-        throw next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError({ message: 'Данные некорректны' }));
       }
       return next(err);
     });
@@ -85,9 +85,9 @@ const updateUser = (req, res, next) => {
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError({ message: 'Данные некорректны' }));
       }
-      next(new ServerError({ message: 'Ошибка сервера' }));
+      throw next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
@@ -108,14 +108,14 @@ const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError({ message: 'Пользователь не найден' });
       }
 
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.kind === 'ObjectId') {
-        throw next(new BadRequestError('Переданный _id некорректный'));
+        throw next(new BadRequestError({ message: 'Переданный _id некорректный' }));
       }
       return next(err);
     });
