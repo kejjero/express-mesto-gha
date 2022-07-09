@@ -28,9 +28,6 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  if (!email || !password) {
-    throw next(new BadRequestError('email или пароль отсутствует'));
-  }
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
@@ -58,7 +55,7 @@ const getUsers = (_, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      throw next(new ServerError({ message: 'Ошибка сервера' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
