@@ -31,11 +31,11 @@ const limiter = rateLimit({
 app.use(limiter);
 
 const errorHandler = (err, _req, res, next) => {
-  const statusCode = err.statusCode || 500;
-
-  const message = statusCode === 500 ? 'Ошибка сервера' : err.message;
-  res.status(statusCode).send({ message });
-  next();
+  if (err.code) {
+    return res.status(err.code).send({ message: err.message || 'Ошибка по умолчанию' });
+  }
+  res.status(500).send({ message: 'На сервере произошла ошибка' });
+  return next();
 };
 
 app.post('/signin', celebrate({
@@ -59,9 +59,9 @@ app.use('/', require('./routes/users'));
 
 app.use('/', require('./routes/cards'));
 
-app.use(errorHandler);
-
 app.use(errors());
+
+app.use(errorHandler);
 
 app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 
