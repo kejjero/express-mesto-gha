@@ -35,7 +35,15 @@ const getCards = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   const deleteCardHandler = () => {
     Card.findByIdAndRemove(req.params.cardId)
-      .then(() => res.send({ message: 'Карточка удалена' }))
+      .then((card) => {
+        if (!card) {
+          throw next(new NotFoundError('Запрашиваемая карточка не найдена'));
+        } else if (card.owner.toString() !== req.user._id) {
+          throw next(new LockError('Запрещено удалять чужие карточки!'));
+        } else {
+          card.remove();
+        }
+      })
       .catch((err) => {
         if (err.name === 'CastError' || err.name === 'ValidationError') {
           throw next(new BadRequestError('Данные некорректны'));

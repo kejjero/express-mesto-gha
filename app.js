@@ -12,6 +12,8 @@ const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+// я поторопился и забыл смерджить ветки, из-за этого так много ошибок :)
+
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -62,7 +64,5 @@ app.use('/', require('./routes/cards'));
 app.use(errors());
 
 app.use(errorHandler);
-
-app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 
 app.listen(PORT);

@@ -1,15 +1,17 @@
 const jwt = require('jsonwebtoken');
 const AuthError = require('../errors/AuthError');
 
-const { JWT_SECRET = 'some-secret-key' } = process.env;
-
 module.exports = (req, _res, next) => {
-  const token = req.cookies.jwt;
+  const auth = req.cookies.jwt;
+
+  if (!auth) {
+    throw new AuthError('Авторизуйтесь');
+  }
 
   let payload;
 
   try {
-    payload = jwt.verify(token, JWT_SECRET);
+    payload = jwt.verify(auth, 'some-secret-key');
   } catch (err) {
     throw next(new AuthError('Авторизуйтесь'));
   }
