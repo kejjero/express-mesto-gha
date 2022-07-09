@@ -42,10 +42,10 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_KEY_CODE) {
-        next(new DuplicateError('email уже зарегистрирован'));
+        throw next(new DuplicateError('email уже зарегистрирован'));
       }
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError('Данные некорректны'));
       }
       return next(err);
     });
