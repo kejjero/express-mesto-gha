@@ -47,10 +47,10 @@ const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((cardInfo) => {
       if (!cardInfo) {
-        next(new NotFoundError('Карточка не найдена'));
+        throw next(new NotFoundError('Карточка не найдена'));
       }
       if (req.user._id !== cardInfo.owner.toString()) {
-        return next(new LockError('невозможно удалить карточку другого пользователя'));
+        throw next(new LockError('невозможно удалить карточку другого пользователя'));
       }
       return deleteCardHandler();
     })
