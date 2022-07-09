@@ -42,10 +42,10 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_KEY_CODE) {
-        throw next(new DuplicateError('email уже зарегистрирован'));
+        next(new DuplicateError('email уже зарегистрирован'));
       }
       if (err.name === 'ValidationError') {
-        throw next(new BadRequestError('Переданы некорректные данные.'));
+        next(new BadRequestError('Данные некорректны'));
       }
       return next(err);
     });
@@ -55,7 +55,7 @@ const getUsers = (_, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch(() => {
-      throw next(new ServerError({ message: 'Ошибка сервера' }));
+      next(new ServerError({ message: 'Ошибка сервера' }));
     });
 };
 
