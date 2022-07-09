@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
+const { errorHandler } = require('./utils/utils');
 
 const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
@@ -32,14 +33,6 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-const errorHandler = (err, _req, res, next) => {
-  if (err.code) {
-    return res.status(err.code).send({ message: err.message || 'Ошибка по умолчанию' });
-  }
-  res.status(500).send({ message: 'На сервере произошла ошибка' });
-  return next();
-};
-
 app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
@@ -55,6 +48,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+
 app.use(auth);
 
 app.use('/', require('./routes/users'));
