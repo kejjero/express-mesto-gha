@@ -29,7 +29,7 @@ const createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
   if (!email || !password) {
-    return next(new BadRequestError('email или пароль отсутствует'));
+    throw next(new BadRequestError('email или пароль отсутствует'));
   }
   return bcrypt.hash(password, 10)
     .then((hash) => User.create({
@@ -45,10 +45,10 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.code === MONGO_DUPLICATE_KEY_CODE) {
-        return next(new DuplicateError('email уже зарегистрирован'));
+        throw next(new DuplicateError('email уже зарегистрирован'));
       }
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Данные некорректны'));
+        throw next(new BadRequestError('Данные некорректны'));
       }
       return next(err);
     });
@@ -104,6 +104,23 @@ const updateAvatar = (req, res, next) => {
     });
 };
 
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь не найден');
+      }
+
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.kind === 'ObjectId') {
+        throw next(new BadRequestError('Переданный _id некорректный'));
+      }
+      return next(err);
+    });
+};
+
 module.exports = {
-  createUser, getUsers, getUser, updateUser, updateAvatar, login,
+  createUser, getUsers, getUser, updateUser, updateAvatar, login, getCurrentUser,
 };
