@@ -4,7 +4,7 @@ const { celebrate, Joi } = require('celebrate');
 const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
 const {
-  createCard, getCards, deleteCard, LikeCard, dislikeCard,
+  createCard, getCards, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
 
 router.post('/cards', celebrate({
@@ -26,7 +26,7 @@ router.put('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().hex().length(24),
   }),
-}), LikeCard);
+}), likeCard);
 
 router.delete('/cards/:cardId/likes', celebrate({
   params: Joi.object().keys({
