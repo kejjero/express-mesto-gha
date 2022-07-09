@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 
@@ -60,6 +60,8 @@ app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
 app.use(errorHandler);
+
+app.use(errors());
 
 app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
 
