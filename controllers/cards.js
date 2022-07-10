@@ -38,27 +38,27 @@ const deleteCard = (req, res, next) => {
       .then(() => res.send({ message: 'Карточка удалена' }))
       .catch((err) => {
         if (err.name === 'CastError' || err.name === 'ValidationError') {
-          return next(new BadRequestError('Переданы некорректные данные.'));
+          throw next(new BadRequestError('Переданы некорректные данные.'));
         }
-        return next(new ServerError('Ошибка сервера'));
+        throw next(new ServerError('Ошибка сервера'));
       });
   };
 
   Card.findById(req.params.cardId)
     .then((cardInfo) => {
       if (!cardInfo) {
-        return next(new NotFoundError('Карточка не найдена.'));
+        throw next(new NotFoundError('Карточка не найдена.'));
       }
       if (req.user._id !== cardInfo.owner.toString()) {
-        return next(new LockError('невозможно удалить карточку другого пользователя'));
+        throw next(new LockError({ message: 'невозможно удалить карточку другого пользователя' }));
       }
       return deleteCardHandler();
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные.'));
+        throw next(new BadRequestError('Переданы некорректные данные.'));
       }
-      return next(new ServerError('Ошибка на сервере'));
+      next(new ServerError('Ошибка на сервере'));
     });
 };
 

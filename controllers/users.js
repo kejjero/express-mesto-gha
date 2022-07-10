@@ -92,7 +92,12 @@ const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   return User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.status(200).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Пользователь с id не найден');
+      }
+      res.status(200).send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw next(new BadRequestError({ message: 'Данные некорректны' }));
