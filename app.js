@@ -57,6 +57,7 @@ app.use('/cards', require('./routes/cards'));
 app.use('*', (_req, _res, next) => next(new NotFoundError('Cтраница не найдена.')));
 
 app.use(errors());
+
 app.use(errorHandler);
 
 app.listen(PORT);

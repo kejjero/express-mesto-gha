@@ -13,6 +13,7 @@ const cardSchema = new mongoose.Schema({
     required: [true, 'Обязательное поле для заполнения'],
     validate: {
       validator: (link) => validator.isURL(link),
+      message: 'Неправильный формат ссылки',
     },
   },
   owner: {
