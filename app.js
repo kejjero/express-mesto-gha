@@ -9,6 +9,7 @@ const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const errorHandler = require('./middlewares/errorHandler');
 const { regExp } = require('./utils/utils');
+const NotFoundError = require('./errors/NotFoundError')
 
 const app = express();
 
@@ -53,8 +54,17 @@ app.use('/', require('./routes/cards'));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
+app.use('*', (req, res, next) => {
+  try {
+    throw next(new NotFoundError('Страница не найдена'));
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use(errorHandler);
 app.use(errors);
+
 
 app.listen(PORT);
 
