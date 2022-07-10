@@ -7,9 +7,13 @@ const rateLimit = require('express-rate-limit');
 const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
-const { errorHandler } = require('./utils/utils');
 
 const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+
+const errorHandler = (err, req, res, next) => {
+  res.status(err.code).send({ message: err.message });
+  next();
+};
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
