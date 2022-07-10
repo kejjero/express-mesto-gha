@@ -54,7 +54,7 @@ app.use('/cards', auth, require('./routes/cards'));
 
 app.use('*', (req, res, next) => {
   try {
-    throw new NotFoundError('Страница не найдена');
+    throw next(new NotFoundError('Страница не найдена'));
   } catch (err) {
     next(err);
   }

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
+const { regExp } = require('../utils/utils');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -11,9 +11,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: [true, 'Обязательное поле для заполнения'],
-    validate: {
-      validator: (link) => validator.isURL(link),
-    },
+    validate: [regExp, 'Введите корректный URL'],
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -21,7 +19,7 @@ const cardSchema = new mongoose.Schema({
     required: [true, 'Обязательное поле для заполнения'],
   },
   likes: {
-    type: [mongoose.Schema.Types.ObjectId],
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     default: [],
   },
