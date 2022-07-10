@@ -28,6 +28,8 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
+mongoose.connect('mongodb://localhost:27017/mestodb');
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -50,7 +52,13 @@ app.post('/signup', celebrate({
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+app.use('*', (req, res, next) => {
+  try {
+    throw new NotFoundError('Страница не найдена');
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.use(errors());
 app.use(errorHandler);
