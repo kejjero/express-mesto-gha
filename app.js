@@ -46,16 +46,15 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
+app.use(auth);
+
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.use(auth);
-
-app.use(errors());
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(errorHandler);
-
-mongoose.connect('mongodb://localhost:27017/mestodb');
+app.use(errors);
 
 app.listen(PORT);
 
