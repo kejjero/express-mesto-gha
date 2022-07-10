@@ -1,7 +1,2 @@
-module.exports.regExp = (url) => {
-  const regex = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
-  if (regex.test(url)) {
-    return url;
-  }
-  throw new Error('Некорректный URL');
-};
+const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
+module.exports = regExp;

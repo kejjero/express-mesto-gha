@@ -1,11 +1,10 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
+const regExp = require('../utils/utils');
 
 const {
   getUsers, getUser, updateUser, updateAvatar, getCurrentUser,
 } = require('../controllers/users');
-
-const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
 router.get('/users/me', getCurrentUser);
 router.get('/users', getUsers);
