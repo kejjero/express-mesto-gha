@@ -9,6 +9,7 @@ const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const errorHandler = require('./middlewares/errorHandler');
 const { regExp } = require('./utils/utils');
+const NotFoundError = require('./errors/NotFoundError');
 
 const app = express();
 
@@ -29,7 +30,6 @@ app.use(limiter);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -52,9 +52,16 @@ app.use('/cards', auth, require('./routes/cards'));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use(errorHandler);
-app.use(errors);
+app.use('*', (req, res, next) => {
+  try {
+    throw new NotFoundError('Страница не найдена');
+  } catch (err) {
+    next(err);
+  }
+});
 
+app.use(errors);
+app.use(errorHandler);
 
 app.listen(PORT);
 
