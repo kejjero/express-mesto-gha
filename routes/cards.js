@@ -3,31 +3,31 @@ const { celebrate, Joi } = require('celebrate');
 const { regExp } = require('../utils/utils');
 
 const {
-  createCard, getCards, deleteCard, likeCard, dislikeCard,
+  getCards,
+  createCard,
+  deleteCard,
+  likeCard,
+  dislikeCard,
 } = require('../controllers/cards');
 
-router.post('/cards', celebrate({
+router.get('/', getCards);
+router.post('/', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().required().min(2).max(30),
     link: Joi.string().min(2).custom(regExp),
   }),
 }), createCard);
-
-router.get('/cards', getCards);
-
-router.delete('/cards/:cardId', celebrate({
+router.delete('/:cardId', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24).hex(),
+    cardId: Joi.string().required().hex().length(24),
   }),
 }), deleteCard);
-
-router.put('/cards/:cardId/likes', celebrate({
+router.put('/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().hex().length(24),
   }),
 }), likeCard);
-
-router.delete('/cards/:cardId/likes', celebrate({
+router.delete('/:cardId/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().required().hex().length(24),
   }),
