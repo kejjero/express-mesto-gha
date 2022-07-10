@@ -6,20 +6,22 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
+const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
+const errorHandler = require('./middlewares/errorHandler');
 
 const regExp = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w.-]+)+[\w\-._~:/?#[\]@!$&'()*+,;=.]+$/;
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
-
 const app = express();
+
+app.use(helmet());
+
+app.use(cookieParser());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const { PORT = 3000 } = process.env;
-
-app.use(helmet());
-app.use(cookieParser());
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -29,14 +31,6 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-
-const errorHandler = (err, _req, res, next) => {
-  if (err.code) {
-    return res.status(err.code).send({ message: err.message || 'Ошибка по умолчанию' });
-  }
-  res.status(500).send({ message: 'На сервере произошла ошибка' });
-  return next();
-};
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -53,16 +47,20 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+
 app.use(auth);
 
 app.use('/', require('./routes/users'));
-
 app.use('/', require('./routes/cards'));
+
+app.use('*', (_req, _res, next) => next(new NotFoundError('Cтраница не найдена.')));
 
 app.use(errors());
 
 app.use(errorHandler);
 
-app.use('*', (_req, res) => res.status(404).send({ message: 'Cтраница не найдена' }));
+mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.listen(PORT);
+
+// я поторопился и забыл смерджить ветки, из-за этого так много ошибок :)

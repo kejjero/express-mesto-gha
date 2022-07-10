@@ -28,7 +28,7 @@ const getCards = (req, res, next) => {
       }
     })
     .catch(() => {
-      next(new ServerError('Ошибка на сервере'));
+      next(new ServerError('Ошибка сервера'));
     });
 };
 
@@ -38,27 +38,27 @@ const deleteCard = (req, res, next) => {
       .then(() => res.send({ message: 'Карточка удалена' }))
       .catch((err) => {
         if (err.name === 'CastError' || err.name === 'ValidationError') {
-          throw next(new BadRequestError('Данные некорректны'));
+          return next(new BadRequestError('Переданы некорректные данные.'));
         }
-        next(new ServerError('Ошибка на сервере'));
+        return next(new ServerError('Ошибка сервера'));
       });
   };
 
   Card.findById(req.params.cardId)
     .then((cardInfo) => {
       if (!cardInfo) {
-        throw next(new NotFoundError('Карточка не найдена'));
+        return next(new NotFoundError('Карточка не найдена.'));
       }
       if (req.user._id !== cardInfo.owner.toString()) {
-        throw next(new LockError('невозможно удалить карточку другого пользователя'));
+        return next(new LockError('невозможно удалить карточку другого пользователя'));
       }
       return deleteCardHandler();
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        throw next(new BadRequestError('Данные некорректны'));
+        return next(new BadRequestError('Переданы некорректные данные.'));
       }
-      next(new ServerError('Ошибка на сервере'));
+      return next(new ServerError('Ошибка на сервере'));
     });
 };
 
