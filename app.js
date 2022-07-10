@@ -49,16 +49,12 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.use('/users', auth, require('./routes/users'));
-app.use('/cards', auth, require('./routes/cards'));
+app.use(auth)
 
-app.use('*', (req, res, next) => {
-  try {
-    throw next(new NotFoundError('Страница не найдена'));
-  } catch (err) {
-    next(err);
-  }
-});
+app.use('/users', require('./routes/users'));
+app.use('/cards', require('./routes/cards'));
+
+app.use('*', (_req, _res, next) => next(new NotFoundError('Cтраница не найдена.')));
 
 app.use(errors());
 app.use(errorHandler);
