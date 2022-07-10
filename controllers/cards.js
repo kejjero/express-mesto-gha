@@ -50,7 +50,7 @@ const deleteCard = (req, res, next) => {
         throw next(new NotFoundError('Карточка не найдена.'));
       }
       if (req.user._id !== cardInfo.owner.toString()) {
-        throw next(new LockError({ message: 'невозможно удалить карточку другого пользователя' } ));
+        throw next(new LockError({ message: 'невозможно удалить карточку другого пользователя' }));
       }
       return deleteCardHandler();
     })
