@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const AuthError = require('../errors/AuthError');
+const { regExp } = require('../utils/utils');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     required: [false, 'необязательное поле для заполнения'],
-    validator: (image) => validator.isURL(image),
+    validate: { validator: regExp, message: 'Введите правильный URL' },
   },
   email: {
     type: String,

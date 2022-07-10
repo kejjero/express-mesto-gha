@@ -6,10 +6,9 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const { celebrate, Joi, errors } = require('celebrate');
 const auth = require('./middlewares/auth');
-const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
 const errorHandler = require('./middlewares/errorHandler');
-const regExp = require('./utils/utils');
+const { regExp } = require('./utils/utils');
 
 const app = express();
 
@@ -41,18 +40,16 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(regExp),
+    avatar: Joi.string().custom(regExp, 'custom validation'),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),
 }), createUser);
 
-app.use(auth);
-
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.use('*', (_req, _res, next) => next(new NotFoundError('Cтраница не найдена.')));
+app.use(auth);
 
 app.use(errors());
 
