@@ -52,15 +52,7 @@ app.use('/cards', auth, require('./routes/cards'));
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use('*', (req, res, next) => {
-  try {
-    throw new NotFoundError('Страница не найдена');
-  } catch (err) {
-    next(err);
-  }
-});
-
-app.use(errors);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT);
